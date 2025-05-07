@@ -2,11 +2,22 @@ document.getElementById("weatherForm").addEventListener("submit", async function
   e.preventDefault();
   const cityName = document.getElementById("cityInput").value;
 
-  const apiUrl =  `https://api.weatherapi.com/v1/current.json?key=b73a4946845547aaa70130710250405&q=${cityName}&aqi=yes`;
+  const apiUrl = `https://api.weatherapi.com/v1/current.json?key=b73a4946845547aaa70130710250405&q=${cityName}&aqi=yes`;
+  
   try {
     const res = await fetch(apiUrl);
-    const data = await res.json();
+    
+    // Check if the response is successful
+    if (!res.ok) {
+      throw new Error('Network response was not ok');
+    }
 
+    const data = await res.json();
+    
+    // Log the data for debugging
+    console.log(data);
+
+    // Update the weather information
     document.getElementById("temperature").textContent = `Temperature: ${data.current.temp_c}°C`;
     document.getElementById("condition").textContent = `Condition: ${data.current.condition.text}`;
     document.getElementById("humidity").textContent = `Humidity: ${data.current.humidity}%`;
@@ -25,11 +36,10 @@ document.getElementById("weatherForm").addEventListener("submit", async function
       aqiElement.style.backgroundColor = "#e74c3c";
     }
 
-    // Save to localStorage
+    // Save the city to localStorage
     localStorage.setItem("lastCity", cityName);
   } catch (error) {
-    alert("Could not fetch weather data. Check city name or API key.");
+    console.error(error);
+    alert("Could not fetch weather data. Please check the city name or API key.");
   }
 });
-
-
